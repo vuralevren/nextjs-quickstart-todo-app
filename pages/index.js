@@ -5,6 +5,7 @@ export async function getServerSideProps() {
   try {
     const { data: todosFromDb, errors } = await altogic.db
       .model("todo")
+      .sort("isCompleted", "asc")
       .page(1)
       .limit(100)
       .get();
@@ -21,6 +22,8 @@ export default function Home({ todosFromDb }) {
   const [todos, setTodos] = useState(todosFromDb);
   const [todoInput, setTodoInput] = useState("");
 
+  const sortedTodos = todos.sort(({ isCompleted }) => (isCompleted ? 1 : -1));
+
   const handleAddTodo = async (e) => {
     e.preventDefault();
 
@@ -32,7 +35,7 @@ export default function Home({ todosFromDb }) {
       if (errors) throw errors;
 
       setTodoInput("");
-      setTodos([...todos, data]);
+      setTodos([data, ...todos]);
     } catch (errorList) {
       alert(errorList?.items[0].message);
     }
@@ -102,7 +105,7 @@ export default function Home({ todosFromDb }) {
         </div>
       </form>
 
-      {todos?.map((todo) => (
+      {sortedTodos?.map((todo) => (
         <div key={todo._id} className="flex items-center justify-between mt-2">
           <div className="relative flex items-center">
             <div className="flex items-center h-5">
@@ -117,7 +120,11 @@ export default function Home({ todosFromDb }) {
               className="ml-3 text-sm w-full p-2 cursor-pointer"
               onClick={() => handleChangeStatus(todo._id, !todo.isCompleted)}
             >
-              <label className="font-medium text-gray-700 cursor-pointer">
+              <label
+                className={`font-medium text-gray-700 cursor-pointer ${
+                  todo.isCompleted && "line-through"
+                }`}
+              >
                 {todo.name}
               </label>
             </div>
