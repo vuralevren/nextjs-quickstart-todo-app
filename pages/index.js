@@ -5,6 +5,7 @@ export async function getServerSideProps() {
   try {
     const { data: todosFromDb, errors } = await altogic.db
       .model("todo")
+      .sort("updatedAt", "desc")
       .sort("isCompleted", "asc")
       .page(1)
       .limit(100)
