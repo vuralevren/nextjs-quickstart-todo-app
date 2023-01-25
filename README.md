@@ -126,34 +126,14 @@ a {
 Replace `pages/index.js` with the following code:
 
 ```jsx
-import { useState } from "react";
-
 export default function Home() {
-  const [todos, setTodos] = useState([]);
-  const [todoInput, setTodoInput] = useState("");
-
-  const handleAddTodo = (e) => {
-    e.preventDefault();
-    console.log("adding todo");
-  };
-
-  const handleChangeStatus = (todoId, newStatus) => {
-    console.log("changing status");
-  };
-
-  const handleDeleteTodo = (todoId) => {
-    console.log("deleting todo");
-  };
-
   return (
     <div className="max-w-2xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:max-w-7xl lg:px-8">
-      <form onSubmit={handleAddTodo}>
+      <form>
         <div className="relative">
           <input
             placeholder="Add Todo"
             className="w-full rounded-md border-gray-200 py-2.5 pr-10 pl-2 shadow-sm sm:text-sm border-2 border-dashed"
-            onChange={(e) => setTodoInput(e.target.value)}
-            value={todoInput}
           />
 
           <span className="absolute inset-y-0 right-0 grid w-10 place-content-center">
@@ -180,47 +160,38 @@ export default function Home() {
         </div>
       </form>
 
-      {todos?.map((todo) => (
-        <div key={todo._id} className="flex items-center justify-between mt-2">
-          <div className="relative flex items-center">
-            <div className="flex items-center h-5">
-              <input
-                type="checkbox"
-                className="focus:ring-indigo-500 h-6 w-6 text-indigo-600 border-gray-300 rounded cursor-pointer"
-                onChange={() => handleChangeStatus(todo._id, !todo.isCompleted)}
-                checked={todo.isCompleted}
-              />
-            </div>
-            <div
-              className="ml-3 text-sm w-full p-2 cursor-pointer"
-              onClick={() => handleChangeStatus(todo._id, !todo.isCompleted)}
-            >
-              <label className="font-medium text-gray-700 cursor-pointer">
-                {todo.name}
-              </label>
-            </div>
+      <div className="flex items-center justify-between mt-2">
+        <div className="relative flex items-center">
+          <div className="flex items-center h-5">
+            <input
+              type="checkbox"
+              className="focus:ring-indigo-500 h-6 w-6 text-indigo-600 border-gray-300 rounded cursor-pointer"
+            />
           </div>
-          <div className="flex items-center px-2 py-2 text-sm font-medium rounded-md">
-            <button onClick={() => handleDeleteTodo(todo._id)}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="currentColor"
-                aria-hidden="true"
-                className="lex-shrink-0 h-5 w-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
-            </button>
+          <div className="ml-3 text-sm w-full p-2 cursor-pointer">
+            <label className="font-medium text-gray-700 cursor-pointer"></label>
           </div>
         </div>
-      ))}
+        <div className="flex items-center px-2 py-2 text-sm font-medium rounded-md">
+          <button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              stroke="currentColor"
+              aria-hidden="true"
+              className="lex-shrink-0 h-5 w-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -299,6 +270,15 @@ We created our model, ”todo.” We have to define the model properties' name 
         > Replace envUrl and clientKey which are shown in the **Home** view of [Altogic Designer](https://designer.altogic.com/).
         > 
         
+        ## Adding states
+        
+        We have added our states to show the todo list and enter a new todo.
+        
+        ```jsx
+        const [todos, setTodos] = useState([]);
+        const [todoInput, setTodoInput] = useState("");
+        ```
+        
         ## Fetching todo list
         
         We have fetched 100 data in our todo model with the Altogic client library.
@@ -323,13 +303,55 @@ We created our model, ”todo.” We have to define the model properties' name 
         }
         ```
         
-        ![Screenshot 2023-01-20 at 10.50.21.png](github/Screenshot_2023-01-20_at_10.50.21.png)
+        ```jsx
+        export default function Home({ todosFromDb }) {
+          const [todos, setTodos] = useState(todosFromDb);
+        ```
+        
+        ```jsx
+        {todos?.map((todo) => (
+                <div key={todo._id} className="flex items-center justify-between mt-2">
+                  <div className="relative flex items-center">
+                    <div className="flex items-center h-5">
+                      <input
+                        type="checkbox"
+                        className="focus:ring-indigo-500 h-6 w-6 text-indigo-600 border-gray-300 rounded cursor-pointer"
+                      />
+                    </div>
+                    <div className="ml-3 text-sm w-full p-2 cursor-pointer">
+                      <label className="font-medium text-gray-700 cursor-pointer">
+                        {todo.name}
+                      </label>
+                    </div>
+                  </div>
+                  <div className="flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                    <button>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                        className="lex-shrink-0 h-5 w-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ))}
+        ```
         
         ## Creating  a todo
         
         We have updated the state after adding todo to our database using altogic client library.
         
-        Replace `handleAddTodo` function with the following code:
+        Add `handleAddTodo` function with the following code:
         
         ```
         const handleAddTodo = async (e) => {
@@ -350,11 +372,46 @@ We created our model, ”todo.” We have to define the model properties' name 
           };
         ```
         
+        ```jsx
+        <form onSubmit={handleAddTodo}>
+           <div className="relative">
+             <input
+                placeholder="Add Todo"
+                className="w-full rounded-md border-gray-200 py-2.5 pr-10 pl-2 shadow-sm sm:text-sm border-2 border-dashed"
+                onChange={(e) => setTodoInput(e.target.value)}
+                value={todoInput}
+             />
+        
+             <span className="absolute inset-y-0 right-0 grid w-10 place-content-center">
+               <button type="submit">
+        	       <span className="sr-only">Submit</span>
+        	       <svg
+        	         xmlns="http://www.w3.org/2000/svg"
+        	         fill="none"
+        	         viewBox="0 0 24 24"
+        	         strokeWidth="2"
+        	         stroke="currentColor"
+        	         aria-hidden="true"
+        	         id="send-icon"
+        	         className="w-7 h-7 text-gray-500"
+        	        >
+        		        <path
+        		         strokeLinecap="round"
+        		         stroke-strokelinejoin="round"
+        		         d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
+        		         />
+        	         </svg>
+                </button>
+             </span>
+             </div>
+         </form>
+        ```
+        
         ## Changing todo status
         
         We have updated the state after updating todo status using altogic client library.
         
-        Replace `handleChangeStatus` function with the following code:
+        Add `handleChangeStatus` function with the following code:
         
         ```jsx
         const handleChangeStatus = async (todoId, newStatus) => {
@@ -375,11 +432,30 @@ We created our model, ”todo.” We have to define the model properties' name 
           };
         ```
         
+        ```jsx
+        <div className="flex items-center h-5">
+            <input
+               type="checkbox"
+               className="focus:ring-indigo-500 h-6 w-6 text-indigo-600 border-gray-300 rounded cursor-pointer"
+               onChange={() => handleChangeStatus(todo._id, !todo.isCompleted)}
+               checked={todo.isCompleted}
+             />
+        </div>
+        <div
+          className="ml-3 text-sm w-full p-2 cursor-pointer"
+          onClick={() => handleChangeStatus(todo._id, !todo.isCompleted)}
+          >
+            <label className="font-medium text-gray-700 cursor-pointer">
+              {todo.name}
+            </label>
+        </div>
+        ```
+        
         ## Deleting the todo
         
         We have updated the state after deleting the todo using altogic client library.
         
-        Replace `handleDeleteTodo` function with the following code:
+        Add `handleDeleteTodo` function with the following code:
         
         ```jsx
         const handleDeleteTodo = async (todoId) => {
@@ -395,11 +471,31 @@ We created our model, ”todo.” We have to define the model properties' name 
           };
         ```
         
+        ```jsx
+        <button onClick={() => handleDeleteTodo(todo._id)}>
+           <svg
+             xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             strokeWidth="2"
+             stroke="currentColor"
+             aria-hidden="true"
+             className="lex-shrink-0 h-5 w-5"
+            >
+        	    <path
+        	     strokeLinecap="round"
+        	     strokeLinejoin="round"
+        	     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+        	    />
+            </svg>
+        </button>
+        ```
+        
         Congratulations!✨
         
         We have successfully completed the example. 
         
-        ![gif.gif](github/gif.gif)
+        ![giftodo.gif](github/giftodo.gif)
         
         ## Adding Advanced Features to Your Todo App with Altogic and Next.js
         
@@ -409,17 +505,70 @@ We created our model, ”todo.” We have to define the model properties' name 
         
         Let's add the sort function in altogic client library to sorting.
         
-        ![Screenshot 2023-01-20 at 15.19.52.png](github/Screenshot_2023-01-20_at_15.19.52.png)
+        ```jsx
+        const { data: todosFromDb, errors } = await altogic.db
+              .model("todo")
+              .sort("isCompleted", "asc")
+              .page(1)
+              .limit(100)
+              .get();
+        ```
         
-        We have changed our variable by using the sort function in javascript so that the sorting is not broken when the state changes.
-        
-        ![Screenshot 2023-01-20 at 15.22.40.png](github/Screenshot_2023-01-20_at_15.22.40.png)
-        
-        ![Screenshot 2023-01-20 at 15.20.43.png](github/Screenshot_2023-01-20_at_15.20.43.png)
+        We have changed our variable by using the sort function in javascript so that the sorting is not broken when the state changes. 
         
         We have added the line-through class to cross out completed todos.
         
-        ![Screenshot 2023-01-20 at 15.20.57.png](github/Screenshot_2023-01-20_at_15.20.57.png)
+        ```jsx
+        const sortedTodos = todos.sort(({ isCompleted }) => (isCompleted ? 1 : -1));
+        ```
+        
+        ```jsx
+        {sortedTodos?.map((todo) => (
+                <div key={todo._id} className="flex items-center justify-between mt-2">
+                  <div className="relative flex items-center">
+                    <div className="flex items-center h-5">
+                      <input
+                        type="checkbox"
+                        className="focus:ring-indigo-500 h-6 w-6 text-indigo-600 border-gray-300 rounded cursor-pointer"
+                        onChange={() => handleChangeStatus(todo._id, !todo.isCompleted)}
+                        checked={todo.isCompleted}
+                      />
+                    </div>
+                    <div
+                      className="ml-3 text-sm w-full p-2 cursor-pointer"
+                      onClick={() => handleChangeStatus(todo._id, !todo.isCompleted)}
+                    >
+                      <label
+                        className={`font-medium text-gray-700 cursor-pointer ${
+                          todo.isCompleted && "line-through"
+                        }`}
+                      >
+                        {todo.name}
+                      </label>
+                    </div>
+                  </div>
+                  <div className="flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                    <button onClick={() => handleDeleteTodo(todo._id)}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                        className="lex-shrink-0 h-5 w-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ))}
+        ```
         
         ## Strategies for Optimizing Your Todo App’s Performance
         
