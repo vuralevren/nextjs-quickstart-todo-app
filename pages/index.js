@@ -20,21 +20,23 @@ export async function getServerSideProps() {
 
 export default function Home({ todosFromDb }) {
   const [todos, setTodos] = useState(todosFromDb);
-  const [todoInput, setTodoInput] = useState("");
 
-  const sortedTodos = todos.sort(({ isCompleted }) => (isCompleted ? 1 : -1));
+  const sortedTodos = todos.sort((a, b) =>
+    a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1
+  );
 
   const handleAddTodo = async (e) => {
     e.preventDefault();
+    const [name] = e.target;
 
     try {
       const { data, errors } = await altogic.db.model("todo").create({
-        name: todoInput,
+        name: name.value,
       });
 
       if (errors) throw errors;
 
-      setTodoInput("");
+      name.value = "";
       setTodos([data, ...todos]);
     } catch (errorList) {
       alert(errorList?.items[0].message);
@@ -77,8 +79,6 @@ export default function Home({ todosFromDb }) {
           <input
             placeholder="Add Todo"
             className="w-full rounded-md border-gray-200 py-2.5 pr-10 pl-2 shadow-sm sm:text-sm border-2 border-dashed"
-            onChange={(e) => setTodoInput(e.target.value)}
-            value={todoInput}
           />
 
           <span className="absolute inset-y-0 right-0 grid w-10 place-content-center">
